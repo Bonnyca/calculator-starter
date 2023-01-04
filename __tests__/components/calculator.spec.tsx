@@ -116,7 +116,7 @@ describe("Calculator component testing errors", () => {
      const button = screen.getByRole("button")
      userEvent.click(button)
 
-     waitFor(async () => {
+     await waitFor(async () => {
       expect(await screen.findByText("DJFHGNSFJGKGNKD224235346456##")).toBeInTheDocument()
      })
 
