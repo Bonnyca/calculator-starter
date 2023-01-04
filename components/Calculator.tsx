@@ -39,6 +39,7 @@ const Calculator = (): JSX.Element => {
   const isNumeric = (value: string) => {
     return /^-?\d+$/.test(value);
   }
+
   const handleCalculate = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const target = e.target as MyForm;
@@ -125,7 +126,7 @@ const Calculator = (): JSX.Element => {
         </Grid2>
         <Grid2 xs={12}>
           <FormControl fullWidth>
-            <Button variant="contained" type="submit">
+            <Button variant="contained" type="submit" >
               Calculate
             </Button>
           </FormControl>
