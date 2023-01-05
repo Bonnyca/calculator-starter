@@ -7,6 +7,7 @@ import {
   NativeSelect,
   Paper,
   TextField,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import { ChangeEvent, FormEvent, useRef, useState } from "react";
@@ -18,14 +19,17 @@ import axios from "axios";
 const Calculator = (): JSX.Element => {
   const [operation, setOperation] = useState("");
   const [result, setResult] = useState("");
-  const [firstError, setfirstError] = useState("")
-  const [secondError, setSecondError] = useState("")
-  const [operationError, setOperationError] = useState("")
+  const [firstError, setfirstError] = useState("");
+  const [secondError, setSecondError] = useState("");
+  const [operationError, setOperationError] = useState("");
+  const [waitingRes, setWaitingRes] = useState(false);
 
   // const first = useRef<HTMLInputElement>();
   // const second = useRef<HTMLInputElement>();
 
   const handleChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    console.log("!!!!!!!")
+
     setOperation(e.target.value);
     setOperationError("")
   };
@@ -40,44 +44,51 @@ const Calculator = (): JSX.Element => {
     return /^-?\d+$/.test(value);
   }
 
-  const handleCalculate = (e: FormEvent<HTMLFormElement>) => {
+  const handleCalculate = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     const target = e.target as MyForm;
     const query = {
       operation: operation,
       first: target.first.value,
       second: target.second.value,
     };
-
     let error = false;
 
     if (!isNumeric(query.first)) {
       setfirstError("Value is not numeric");
       error = true;
+
     }
 
     if (!isNumeric(query.second)) {
       setSecondError("Value is not numeric");
       error = true;
+
     }
 
     if (!query.operation) {
       setOperationError("Choose the operation");
       error = true;
+
     }
-
-
     if (!error) {
+      
       axios
         .get(`/api/calculate/${query.operation}/${query.first}/${query.second}`)
+
         .then((res) => {
           setResult(res.data.result);
+          setWaitingRes(false);
         })
         .catch((err) => {
           setResult(err.response.data.message);
+          setWaitingRes(false);
         });
     };
+
   }
+
 
 
 
@@ -126,9 +137,18 @@ const Calculator = (): JSX.Element => {
         </Grid2>
         <Grid2 xs={12}>
           <FormControl fullWidth>
-            <Button variant="contained" type="submit" >
-              Calculate
-            </Button>
+
+              <Button
+                variant="contained"
+                type="submit"
+  
+              >
+                Calculate
+              </Button>
+            
+
+           
+
           </FormControl>
         </Grid2>
         <Grid2 xs={12}>

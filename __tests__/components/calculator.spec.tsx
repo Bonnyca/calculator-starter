@@ -117,7 +117,7 @@ describe("Calculator component testing errors", () => {
      userEvent.click(button)
 
      await waitFor(async () => {
-      expect(await screen.findByText("DJFHGNSFJGKGNKD224235346456##")).toBeInTheDocument()
+      expect(await screen.findByText("Value is not numeric")).toBeInTheDocument()
      })
 
     })
