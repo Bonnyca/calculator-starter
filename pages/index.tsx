@@ -1,5 +1,7 @@
-import { Typography, Container, Stack } from "@mui/material";
+import { Container, Stack, Typography } from "@mui/material";
+
 import Calculator from "../components/Calculator";
+import CurrentCalculator from "./[operation]/[first]/[second]/index"
 
 export default function Home(): JSX.Element {
   return (
@@ -8,7 +10,9 @@ export default function Home(): JSX.Element {
         <Typography variant="h2" gutterBottom sx={{ marginBottom: "30px" }}>
           The Amazing Calculator
         </Typography>
-        <Calculator />
+        <Calculator
+        />
+   
       </Stack>
     </Container>
   );

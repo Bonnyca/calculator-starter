@@ -10,27 +10,46 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { ChangeEvent, FormEvent, useRef, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
 
 import Grid2 from "@mui/material/Unstable_Grid2";
 import { OutlinedInput } from "@mui/material";
 import axios from "axios";
 
-const Calculator = (): JSX.Element => {
-  const [operation, setOperation] = useState("");
+interface ICalcParams {
+  operation?: string;
+  initFirst?: number;
+  initSecond?: number;
+}
+
+const Calculator = ({operation, initFirst, initSecond}: ICalcParams): JSX.Element => {
+  const [curOperation, setCurOperation] = useState("");
+  const [first, setFirst] = useState(0);
+  const [second, setSecond] = useState(0);
+
   const [result, setResult] = useState("");
   const [firstError, setfirstError] = useState("");
   const [secondError, setSecondError] = useState("");
   const [operationError, setOperationError] = useState("");
   const [waitingRes, setWaitingRes] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   // const first = useRef<HTMLInputElement>();
   // const second = useRef<HTMLInputElement>();
 
-  const handleChange = (e: ChangeEvent<HTMLSelectElement>) => {
-    console.log("!!!!!!!")
+useEffect(()=>{
+  if (initFirst != undefined && initSecond != undefined){
+    setCurOperation(operation)
+  setFirst(initFirst);
+  setSecond(initSecond);
+  }
 
-    setOperation(e.target.value);
+},[initFirst, initSecond, operation])
+
+
+  const handleChange = (e: ChangeEvent<HTMLSelectElement>) => {
+
+    setCurOperation(e.target.value);
     setOperationError("")
   };
 
@@ -44,16 +63,19 @@ const Calculator = (): JSX.Element => {
     return /^-?\d+$/.test(value);
   }
 
+  
   const handleCalculate = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
+    
     const target = e.target as MyForm;
     const query = {
-      operation: operation,
+      operation: curOperation,
       first: target.first.value,
       second: target.second.value,
     };
+
     let error = false;
+    
 
     if (!isNumeric(query.first)) {
       setfirstError("Value is not numeric");
@@ -97,11 +119,12 @@ const Calculator = (): JSX.Element => {
       <Grid2 container spacing={1}>
         <Grid2 xs={5}>
           <FormControl fullWidth>
-            <TextField id="first" label="First Number" variant="outlined"
+            <TextField id="first" value={first} label= {"First Number"} variant="outlined"
               error={!!firstError}
               helperText={firstError || ""}
-              onChange={() => { setfirstError("") }}
-              required
+              onChange={(e) => { 
+                setFirst(e.target.value);           
+                setfirstError("") }}
             />
           </FormControl>
         </Grid2>
@@ -109,13 +132,18 @@ const Calculator = (): JSX.Element => {
           <FormControl fullWidth>
             <NativeSelect
               input={<OutlinedInput />}
-              defaultValue={""}
+              value={curOperation}
+              
+            
               inputProps={{
                 name: "operation",
                 id: "operation",
               }}
-              onChange={handleChange}
+              onChange={(e)=>{
+                handleChange(e)      
+              }}
               error={!!operationError}            >
+               
               <option value="">Op</option>
               <option value={"add"}>+</option>
               <option value={"subtract"}>-</option>
@@ -127,10 +155,13 @@ const Calculator = (): JSX.Element => {
         </Grid2>
         <Grid2 xs={5}>
           <FormControl fullWidth>
-            <TextField id="second" label="Second Number" variant="outlined"
+            <TextField id="second" value={second ? second: ""} label="Second Number" variant="outlined"
               error={!!secondError}
               helperText={secondError || ""}
-              onChange={() => { setSecondError("") }}
+              onChange={(e) => { 
+                setSecond(e.target.value);
+                setSecondError("")
+               }}
             />
 
           </FormControl>
@@ -140,9 +171,7 @@ const Calculator = (): JSX.Element => {
 
               <Button
                 variant="contained"
-                type="submit"
-  
-              >
+                type="submit">
                 Calculate
               </Button>
             
@@ -168,4 +197,3 @@ const Calculator = (): JSX.Element => {
   );
 };
 export default Calculator;
-
